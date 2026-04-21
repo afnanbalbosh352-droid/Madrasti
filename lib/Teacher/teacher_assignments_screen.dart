@@ -18,22 +18,21 @@ class _TeacherAssignmentsScreenState
   DateTime? selectedDate;
 
   // 🎯 هيكل المدرسة
-  final Map<String, Map<String, List<String>>> school = {
-    "العاشر": {
-      "أ": ["أحمد", "محمد"],
-      "ب": ["علي", "سارة"],
-    },
-    "التاسع": {
-      "أ": ["ليان", "يوسف"],
-    }
-  };
+ final Map<String, Map<String, List<String>>> school = {
+  "Tenth": {
+    "A": ["Ahmed", "Mohammad"],
+    "B": ["Ali", "Sara"],
+  },
+  "Ninth": {
+    "A": ["Layan", "Yousef"],
+  }
+};
 
-  String selectedGrade = "العاشر";
-  String selectedSection = "أ";
-  String selectedSubject = "رياضيات";
+String selectedGrade = "Tenth";
+String selectedSection = "A";
+String selectedSubject = "Math";
 
-  final List<String> subjects = ["رياضيات", "علوم", "إنجليزي"];
-
+final List<String> subjects = ["Math", "Science", "English"];
   List<Map<String, dynamic>> assignments = [];
 
   List<String> get sections => school[selectedGrade]!.keys.toList();
@@ -78,7 +77,7 @@ class _TeacherAssignmentsScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text("إدارة الواجبات")),
+      appBar: AppBar(title: const Text("Assignments Management")),
 
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -98,7 +97,7 @@ class _TeacherAssignmentsScreenState
                     // 🎓 الصف
                     DropdownButtonFormField(
                       initialValue: selectedGrade,
-                      decoration: const InputDecoration(labelText: "الصف"),
+                      decoration: const InputDecoration(labelText: "Class"),
                       items: school.keys.map((g) {
                         return DropdownMenuItem(value: g, child: Text(g));
                       }).toList(),
@@ -115,7 +114,7 @@ class _TeacherAssignmentsScreenState
                     // 🏫 الشعبة
                     DropdownButtonFormField(
                       initialValue: selectedSection,
-                      decoration: const InputDecoration(labelText: "الشعبة"),
+                      decoration: const InputDecoration(labelText: "Section"),
                       items: sections.map((s) {
                         return DropdownMenuItem(value: s, child: Text(s));
                       }).toList(),
@@ -128,7 +127,7 @@ class _TeacherAssignmentsScreenState
                     // 📚 المادة
                     DropdownButtonFormField(
                       initialValue: selectedSubject,
-                      decoration: const InputDecoration(labelText: "المادة"),
+                      decoration: const InputDecoration(labelText: "Course"),
                       items: subjects.map((s) {
                         return DropdownMenuItem(value: s, child: Text(s));
                       }).toList(),
@@ -142,7 +141,7 @@ class _TeacherAssignmentsScreenState
                     TextField(
                       controller: titleController,
                       decoration:
-                      const InputDecoration(labelText: "عنوان الواجب"),
+                      const InputDecoration(labelText: "Assignment Title"),
                     ),
 
                     const SizedBox(height: 10),
@@ -151,7 +150,7 @@ class _TeacherAssignmentsScreenState
                     TextField(
                       controller: descController,
                       decoration:
-                      const InputDecoration(labelText: "وصف الواجب"),
+                      const InputDecoration(labelText: "Assignment Description"),
                     ),
 
                     const SizedBox(height: 10),
@@ -162,13 +161,13 @@ class _TeacherAssignmentsScreenState
                         Expanded(
                           child: Text(
                             selectedDate == null
-                                ? "اختر تاريخ التسليم"
+                                ? "Choose Due date"
                                 : "${selectedDate!.year}-${selectedDate!.month}-${selectedDate!.day}",
                           ),
                         ),
                         TextButton(
                           onPressed: pickDate,
-                          child: const Text("اختيار"),
+                          child: const Text("Choose"),
                         )
                       ],
                     ),
@@ -177,7 +176,7 @@ class _TeacherAssignmentsScreenState
 
                     ElevatedButton(
                       onPressed: addAssignment,
-                      child: const Text("إضافة الواجب"),
+                      child: const Text("Add Assignment"),
                     ),
                   ],
                 ),
@@ -206,8 +205,8 @@ class _TeacherAssignmentsScreenState
 
                       subtitle: Text(
                         "${a["grade"]} - ${a["section"]}\n"
-                            "المادة: ${a["subject"]}\n"
-                            "التسليم: ${a["date"].year}-${a["date"].month}-${a["date"].day}\n"
+                            "Course: ${a["subject"]}\n"
+                            "Due date: ${a["date"].year}-${a["date"].month}-${a["date"].day}\n"
                             "${a["desc"]}",
                       ),
                     ),

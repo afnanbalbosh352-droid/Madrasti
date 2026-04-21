@@ -14,14 +14,13 @@ class _ActivitiesTeacherScreenState extends State<ActivitiesTeacherScreen> {
   final descController = TextEditingController();
 
   // 🎯 هيكل المدرسة
-  String selectedGrade = "العاشر";
-  String selectedSection = "أ";
-  String selectedSubject = "رياضيات";
+  String selectedGrade = "Tenth";
+String selectedSection = "A";
+String selectedSubject = "Math";
 
-  final List<String> grades = ["العاشر", "التاسع"];
-  final List<String> sections = ["أ", "ب"];
-  final List<String> subjects = ["رياضيات", "علوم", "إنجليزي"];
-
+final List<String> grades = ["Tenth", "Ninth"];
+final List<String> sections = ["A", "B"];
+final List<String> subjects = ["Math", "Science", "English"];
   List<Map<String, String>> activities = [];
 
   void addActivity() {
@@ -45,8 +44,7 @@ class _ActivitiesTeacherScreenState extends State<ActivitiesTeacherScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text("إدارة الأنشطة")),
-
+      appBar: AppBar(title: const Text("Activities Management")),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -65,7 +63,7 @@ class _ActivitiesTeacherScreenState extends State<ActivitiesTeacherScreen> {
                     // 🎓 الصف
                     DropdownButtonFormField(
                       initialValue: selectedGrade,
-                      decoration: const InputDecoration(labelText: "الصف"),
+                      decoration: const InputDecoration(labelText: "Class"),
                       items: grades.map((g) {
                         return DropdownMenuItem(value: g, child: Text(g));
                       }).toList(),
@@ -77,7 +75,7 @@ class _ActivitiesTeacherScreenState extends State<ActivitiesTeacherScreen> {
                     // 🏫 الشعبة
                     DropdownButtonFormField(
                       initialValue: selectedSection,
-                      decoration: const InputDecoration(labelText: "الشعبة"),
+                      decoration: const InputDecoration(labelText: "Section"),
                       items: sections.map((s) {
                         return DropdownMenuItem(value: s, child: Text(s));
                       }).toList(),
@@ -89,7 +87,7 @@ class _ActivitiesTeacherScreenState extends State<ActivitiesTeacherScreen> {
                     // 📚 المادة
                     DropdownButtonFormField(
                       initialValue: selectedSubject,
-                      decoration: const InputDecoration(labelText: "المادة"),
+                      decoration: const InputDecoration(labelText: "Course"),
                       items: subjects.map((s) {
                         return DropdownMenuItem(value: s, child: Text(s));
                       }).toList(),
@@ -102,7 +100,7 @@ class _ActivitiesTeacherScreenState extends State<ActivitiesTeacherScreen> {
                     TextField(
                       controller: titleController,
                       decoration: const InputDecoration(
-                        labelText: "عنوان النشاط",
+                     labelText: "Activity Title",
                       ),
                     ),
 
@@ -112,7 +110,7 @@ class _ActivitiesTeacherScreenState extends State<ActivitiesTeacherScreen> {
                     TextField(
                       controller: descController,
                       decoration: const InputDecoration(
-                        labelText: "وصف النشاط",
+                      labelText: "Activity Description",
                       ),
                     ),
 
@@ -121,7 +119,7 @@ class _ActivitiesTeacherScreenState extends State<ActivitiesTeacherScreen> {
                     // 🔘 زر
                     ElevatedButton(
                       onPressed: addActivity,
-                      child: const Text("إضافة النشاط"),
+                    child: const Text("Add Activity"),
                     ),
                   ],
                 ),
@@ -151,7 +149,7 @@ class _ActivitiesTeacherScreenState extends State<ActivitiesTeacherScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text("${a["grade"]} - ${a["section"]}"),
-                          Text("المادة: ${a["subject"]}"),
+                          Text("Course: ${a["subject"]}"),
                           Text(a["desc"]!),
                         ],
                       ),

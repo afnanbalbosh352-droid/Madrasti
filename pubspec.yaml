@@ -1,10 +1,11 @@
 name: madrasati
-description: "A new Flutter project."
+description: "A new Flutter project for Madrasati School Management System."
 publish_to: 'none'
+
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.11.4
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
@@ -24,5 +25,5 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/logo.png
+    - assets/images/
     - assets/lang/

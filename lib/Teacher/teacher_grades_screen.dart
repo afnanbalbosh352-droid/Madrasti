@@ -12,15 +12,15 @@ class _TeacherGradesScreenState extends State<TeacherGradesScreen> {
 
   final gradeController = TextEditingController();
 
-  String selectedStudent = "أحمد";
-  String selectedClass = "العاشر أ";
-  String selectedSubject = "رياضيات";
-  String selectedExam = "امتحان أول";
+ String selectedStudent = "Ahmed";
+String selectedClass = "Tenth A";
+String selectedSubject = "Math";
+String selectedExam = "First Exam";
 
-  final List<String> students = ["أحمد", "محمد", "علي"];
-  final List<String> classes = ["العاشر أ", "العاشر ب"];
-  final List<String> subjects = ["رياضيات", "علوم", "إنجليزي"];
-  final List<String> exams = ["امتحان أول", "امتحان ثاني", "نهائي"];
+final List<String> students = ["Ahmed", "Muhammad", "Ali"];
+final List<String> classes = ["Tenth A", "Tenth B"];
+final List<String> subjects = ["Math", "Science", "English"];
+final List<String> exams = ["First Exam", "Second Exam", "Final Exam"];
 
   List<Map<String, dynamic>> grades = [];
 
@@ -44,7 +44,7 @@ class _TeacherGradesScreenState extends State<TeacherGradesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text("إدخال العلامات")),
+      appBar: AppBar(title: const Text("Adding student's grades")),
 
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -64,7 +64,7 @@ class _TeacherGradesScreenState extends State<TeacherGradesScreen> {
                     // 👤 الطالب
                     DropdownButtonFormField<String>(
                       initialValue: selectedStudent,
-                      decoration: const InputDecoration(labelText: "الطالب"),
+                      decoration: const InputDecoration(labelText: "Student"),
                       items: students.map((s) {
                         return DropdownMenuItem(value: s, child: Text(s));
                       }).toList(),
@@ -77,7 +77,7 @@ class _TeacherGradesScreenState extends State<TeacherGradesScreen> {
                     // 🏫 الصف
                     DropdownButtonFormField<String>(
                       initialValue: selectedClass,
-                      decoration: const InputDecoration(labelText: "الصف"),
+                      decoration: const InputDecoration(labelText: "Class"),
                       items: classes.map((c) {
                         return DropdownMenuItem(value: c, child: Text(c));
                       }).toList(),
@@ -90,7 +90,7 @@ class _TeacherGradesScreenState extends State<TeacherGradesScreen> {
                     // 📚 المادة
                     DropdownButtonFormField<String>(
                       initialValue: selectedSubject,
-                      decoration: const InputDecoration(labelText: "المادة"),
+                      decoration: const InputDecoration(labelText: "Subject"),
                       items: subjects.map((s) {
                         return DropdownMenuItem(value: s, child: Text(s));
                       }).toList(),
@@ -103,7 +103,7 @@ class _TeacherGradesScreenState extends State<TeacherGradesScreen> {
                     // 🧾 نوع الامتحان
                     DropdownButtonFormField<String>(
                       initialValue: selectedExam,
-                      decoration: const InputDecoration(labelText: "نوع الامتحان"),
+                      decoration: const InputDecoration(labelText: "Exam type"),
                       items: exams.map((e) {
                         return DropdownMenuItem(value: e, child: Text(e));
                       }).toList(),
@@ -118,7 +118,7 @@ class _TeacherGradesScreenState extends State<TeacherGradesScreen> {
                       controller: gradeController,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
-                        labelText: "العلامة",
+                        labelText: "Grade",
                       ),
                     ),
 
@@ -127,7 +127,7 @@ class _TeacherGradesScreenState extends State<TeacherGradesScreen> {
                     // 🔘 زر
                     ElevatedButton(
                       onPressed: addGrade,
-                      child: const Text("إضافة العلامة"),
+                      child: const Text("Add grade"),
                     ),
                   ],
                 ),
@@ -151,7 +151,7 @@ class _TeacherGradesScreenState extends State<TeacherGradesScreen> {
                     child: ListTile(
                       title: Text(
                           "${g["student"]} - ${g["subject"]} (${g["exam"]})"),
-                      subtitle: Text("الصف: ${g["class"]}"),
+                      subtitle: Text("Class: ${g["class"]}"),
                       trailing: Text(
                         g["grade"],
                         style: TextStyle(

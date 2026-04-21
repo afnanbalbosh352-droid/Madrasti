@@ -5,103 +5,99 @@ class TeacherScheduleScreen extends StatefulWidget {
   const TeacherScheduleScreen({super.key});
 
   @override
-  State<TeacherScheduleScreen> createState() =>
-      _TeacherScheduleScreenState();
+  State<TeacherScheduleScreen> createState() => _TeacherScheduleScreenState();
 }
 
 class _TeacherScheduleScreenState extends State<TeacherScheduleScreen> {
-
-  // 🎯 هيكل المدرسة (يوم + حصة)
+  // 🎯 هيكل البيانات (تم التأكد من وجود العاشر والسابع)
   final Map<String, Map<String, Map<String, List<String>>>> schedule = {
-    "العاشر": {
-      "أ": {
-        "الأحد": [
-          "رياضيات", "علوم", "إنجليزي", "عربي",
-          "رياضيات", "علوم", "رياضة", "فن"
-        ],
-        "الإثنين": [
-          "علوم", "رياضيات", "عربي", "إنجليزي",
-          "رياضيات", "دين", "حاسوب", "رياضة"
-        ],
+    "Tenth": {
+      "A": {
+        "Sunday": ["Math", "Science", "English", "Arabic", "Math", "Science", "Art"],
+        "Monday": ["Science", "Math", "Arabic", "English", "Math", "Religion", "Computer"],
       },
-      "ب": {
-        "الأحد": [
-          "عربي", "رياضيات", "علوم", "إنجليزي",
-          "رياضيات", "رياضة", "فن", "دين"
-        ],
+      "B": {
+        "Sunday": ["Arabic", "Math", "Science", "English", "Math", "Art", "Arabic"],
+        "Monday": ["English", "Science", "Math", "Arabic", "Math", "Religion", "Art"],
+      },
+    },
+    "Seventh": {
+      "A": {
+        "Sunday": ["Math", "Arabic", "Science", "English", "Math", "Art", "Computer"],
+        "Monday": ["Arabic", "Math", "English", "Science", "Religion", "Math", "Art"],
+      },
+      "B": {
+        "Sunday": ["Science", "Math", "Arabic", "English", "Math", "Art", "Religion"],
+        "Monday": ["Math", "Science", "English", "Arabic", "Math", "Computer", "Art"],
       },
     },
   };
 
-  String selectedGrade = "العاشر";
-  String selectedSection = "أ";
+  String selectedGrade = "Tenth";
+  String selectedSection = "A";
 
-  final List<String> days = ["الأحد", "الإثنين"];
+  final List<String> days = ["Sunday", "Monday"];
   final List<String> periods = [
-    "الحصة 1",
-    "الحصة 2",
-    "الحصة 3",
-    "الحصة 4",
-    "الحصة 5",
-    "الحصة 6",
-    "الحصة 7",
-    "الحصة 8",
+    "Class 1", "Class 2", "Class 3", "Class 4",
+    "Class 5", "Class 6", "Class 7", 
   ];
 
-  List<String> get sections =>
-      schedule[selectedGrade]!.keys.toList();
+  // دالة لجلب الشعب المتاحة للصف المختار
+  List<String> get sections => schedule[selectedGrade]!.keys.toList();
 
   @override
   Widget build(BuildContext context) {
+    // جلب البيانات الحالية بناءً على الاختيار
     final current = schedule[selectedGrade]![selectedSection]!;
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text("جدول الحصص")),
-
+      appBar: AppBar(
+        title: const Text("Teacher Schedule"),
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
-
-            // 📦 اختيار الصف والشعبة
+            // 📦 صندوق اختيار الصف والشعبة
             Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-              ),
+              elevation: 4,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(
                   children: [
-
+                    // قائمة اختيار الصف (عاشر / سابع)
                     Expanded(
-                      child: DropdownButtonFormField(
-                        initialValue: selectedGrade,
-                        decoration: const InputDecoration(labelText: "الصف"),
+                      child: DropdownButtonFormField<String>(
+                        value: selectedGrade, // استخدام value بدلاً من initialValue للإصلاح
+                        decoration: const InputDecoration(labelText: "Grade"),
                         items: schedule.keys.map((g) {
                           return DropdownMenuItem(value: g, child: Text(g));
                         }).toList(),
                         onChanged: (val) {
                           setState(() {
                             selectedGrade = val!;
-                            selectedSection =
-                                schedule[val]!.keys.first;
+                            // تحديث الشعبة تلقائياً لتجنب تعارض البيانات
+                            selectedSection = schedule[val]!.keys.first;
                           });
                         },
                       ),
                     ),
-
                     const SizedBox(width: 10),
-
+                    // قائمة اختيار الشعبة
                     Expanded(
-                      child: DropdownButtonFormField(
-                        initialValue: selectedSection,
-                        decoration: const InputDecoration(labelText: "الشعبة"),
+                      child: DropdownButtonFormField<String>(
+                        value: selectedSection, // استخدام value بدلاً من initialValue للإصلاح
+                        decoration: const InputDecoration(labelText: "Section"),
                         items: sections.map((s) {
                           return DropdownMenuItem(value: s, child: Text(s));
                         }).toList(),
-                        onChanged: (val) =>
-                            setState(() => selectedSection = val!),
+                        onChanged: (val) {
+                          setState(() => selectedSection = val!);
+                        },
                       ),
                     ),
                   ],
@@ -109,31 +105,41 @@ class _TeacherScheduleScreenState extends State<TeacherScheduleScreen> {
               ),
             ),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
 
-            // 📊 جدول حقيقي
+            // 📊 جدول الحصص
             Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  headingRowColor: WidgetStateProperty.all(
-                    AppColors.primary.withOpacity(0.1),
-                  ),
-                  columns: [
-                    const DataColumn(label: Text("الحصة")),
-                    ...days.map((d) => DataColumn(label: Text(d))),
-                  ],
-                  rows: List.generate(periods.length, (i) {
-                    return DataRow(
-                      cells: [
-                        DataCell(Text(periods[i])),
-                        ...days.map((day) {
-                          final subject = current[day]?[i] ?? "-";
-                          return DataCell(Text(subject));
-                        }),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      headingRowColor: WidgetStateProperty.all(
+                        AppColors.primary.withOpacity(0.1),
+                      ),
+                      columns: [
+                        const DataColumn(label: Text("Class", style: TextStyle(fontWeight: FontWeight.bold))),
+                        ...days.map((d) => DataColumn(label: Text(d, style: const TextStyle(fontWeight: FontWeight.bold)))),
                       ],
-                    );
-                  }),
+                      rows: List.generate(periods.length, (i) {
+                        return DataRow(
+                          cells: [
+                            DataCell(Text(periods[i], style: const TextStyle(fontWeight: FontWeight.w500))),
+                            ...days.map((day) {
+                              final subject = current[day]?[i] ?? "-";
+                              return DataCell(Text(subject));
+                            }),
+                          ],
+                        );
+                      }),
+                    ),
+                  ),
                 ),
               ),
             ),

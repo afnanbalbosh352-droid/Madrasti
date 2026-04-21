@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../General/app_colors.dart';
 
 class AttendanceScreen extends StatefulWidget {
   const AttendanceScreen({super.key});
@@ -9,199 +8,178 @@ class AttendanceScreen extends StatefulWidget {
 }
 
 class _AttendanceScreenState extends State<AttendanceScreen> {
+  // --- 1. Data Structure (Grades -> Sections -> Students) ---
+  final Map<String, Map<String, List<String>>> schoolData = {
+    "Grade 10": {
+      "Section A": ["Ahmad Ali", "Muna Omar", "Zaid Salem","Areej Moh"],
+      "Section B": ["Sami Noor", "Raya Hassan","Batool","Ayman"],
+      "Section C": ["Dana", "Tia Omar", "Zina Salem","Mahmoud"],
 
-  // 🎯 اختيار الصف والشعبة
-  String selectedGrade = "العاشر";
-  String selectedSection = "أ";
+    },
+    "Grade 9": {
+      "Section A": ["Omar Khalid", "Layla Ahmad","Asala"],
+      "Section B": ["Hamza Adam", "Sara Ahmed", "Yousef Noor"],
+     "Section C": ["Ahmad Ali", "Muna Omar", "Zaid Salem"],
 
-  final List<String> grades = ["العاشر", "التاسع"];
-  final List<String> sections = ["أ", "ب"];
+    }
+  };
 
-  // 👨‍🎓 طلاب (Fake)
-  final List<String> students = ["أحمد", "محمد", "علي"];
+  String? selectedGrade;
+  String? selectedSection;
+  
+  // To store attendance status: { "Student Name": true/false }
+  Map<String, bool> attendanceStatus = {};
 
-  final Map<String, String> status = {};
-  bool submitted = false;
-
-  // ✅ تسجيل الكل حضور
-  void markAllPresent() {
-    setState(() {
-      for (var s in students) {
-        status[s] = "حضور";
-      }
-    });
+  @override
+  void initState() {
+    super.initState();
+    // Initialize default values
+    selectedGrade = schoolData.keys.first;
+    selectedSection = schoolData[selectedGrade]!.keys.first;
+    _initializeAttendance();
   }
 
-  // ❌ تسجيل الكل غياب
-  void markAllAbsent() {
-    setState(() {
-      for (var s in students) {
-        status[s] = "غياب";
-      }
-    });
+  // --- 2. Initialize or Refresh Student List ---
+  void _initializeAttendance() {
+    // Reset the map to avoid old data conflicts
+    attendanceStatus = {}; 
+    List<String> students = schoolData[selectedGrade]![selectedSection]!;
+    for (var student in students) {
+      attendanceStatus[student] = false; // Default: Absent
+    }
   }
 
-  void submit() {
-    setState(() => submitted = true);
+  void _submitAttendance() {
+    // Logic to send data to Firebase will go here
+    print("Attendance Data: $attendanceStatus");
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Attendance Submitted Successfully!"),
+        backgroundColor: Colors.green,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    // Safely get the list of students for the current selection
+    List<String> currentStudents = schoolData[selectedGrade]![selectedSection] ?? [];
+
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text("تسجيل الحضور")),
-
+      appBar: AppBar(
+        title: const Text("Student Attendance"),
+        backgroundColor: Colors.blueAccent,
+        centerTitle: true,
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-            // 📦 اختيار الصف والشعبة
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-
-                    Expanded(
-                      child: DropdownButtonFormField(
-                        initialValue: selectedGrade,
-                        decoration: const InputDecoration(labelText: "الصف"),
-                        items: grades.map((g) {
-                          return DropdownMenuItem(value: g, child: Text(g));
-                        }).toList(),
-                        onChanged: (val) =>
-                            setState(() => selectedGrade = val!),
-                      ),
-                    ),
-
-                    const SizedBox(width: 10),
-
-                    Expanded(
-                      child: DropdownButtonFormField(
-                        initialValue: selectedSection,
-                        decoration: const InputDecoration(labelText: "الشعبة"),
-                        items: sections.map((s) {
-                          return DropdownMenuItem(value: s, child: Text(s));
-                        }).toList(),
-                        onChanged: (val) =>
-                            setState(() => selectedSection = val!),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            const Text(
+              "Select Class & Section",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-
-            const SizedBox(height: 10),
-
-            // 🔘 أزرار جماعية
-            if (!submitted)
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: markAllPresent,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                      ),
-                      child: const Text("الكل حضور"),
+            const SizedBox(height: 15),
+            
+            // --- Dropdowns Row ---
+            Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: selectedGrade,
+                    decoration: const InputDecoration(
+                      labelText: "Grade",
+                      border: OutlineInputBorder(),
                     ),
+                    items: schoolData.keys.map((g) {
+                      return DropdownMenuItem(value: g, child: Text(g));
+                    }).toList(),
+                    onChanged: (val) {
+                      setState(() {
+                        selectedGrade = val;
+                        selectedSection = schoolData[val]!.keys.first;
+                        _initializeAttendance();
+                      });
+                    },
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: markAllAbsent,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                      ),
-                      child: const Text("الكل غياب"),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: selectedSection,
+                    decoration: const InputDecoration(
+                      labelText: "Section",
+                      border: OutlineInputBorder(),
                     ),
+                    items: schoolData[selectedGrade]!.keys.map((s) {
+                      return DropdownMenuItem(value: s, child: Text(s));
+                    }).toList(),
+                    onChanged: (val) {
+                      setState(() {
+                        selectedSection = val;
+                        _initializeAttendance();
+                      });
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
+            ),
+            
+            const Divider(height: 40),
 
-            const SizedBox(height: 10),
-
-            // 📋 قائمة الطلاب
+            // --- Students List ---
             Expanded(
-              child: ListView.builder(
-                itemCount: students.length,
-                itemBuilder: (_, i) {
-                  final s = students[i];
-                  final current = status[s];
-
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: ListTile(
-                      title: Text(s),
-
-                      trailing: submitted
-                          ? Text(
-                        current ?? "-",
-                        style: TextStyle(
-                          color: current == "حضور"
-                              ? Colors.green
-                              : Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                          : Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-
-                          // حضور
-                          IconButton(
-                            icon: Icon(
-                              Icons.check_circle,
-                              color: current == "حضور"
-                                  ? Colors.green
-                                  : Colors.grey,
+              child: currentStudents.isEmpty
+                  ? const Center(child: Text("No students found."))
+                  : ListView.builder(
+                      itemCount: currentStudents.length,
+                      itemBuilder: (context, index) {
+                        String studentName = currentStudents[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 5),
+                          child: CheckboxListTile(
+                            title: Text(
+                              studentName,
+                              style: const TextStyle(fontWeight: FontWeight.w500),
                             ),
-                            onPressed: () {
+                            subtitle: Text(
+                              (attendanceStatus[studentName] ?? false) ? "Present" : "Absent",
+                              style: TextStyle(
+                                color: (attendanceStatus[studentName] ?? false) ? Colors.green : Colors.red,
+                              ),
+                            ),
+                            secondary: const Icon(Icons.person),
+                            value: attendanceStatus[studentName] ?? false,
+                            activeColor: Colors.green,
+                            onChanged: (bool? value) {
                               setState(() {
-                                status[s] = "حضور";
+                                attendanceStatus[studentName] = value!;
                               });
                             },
                           ),
-
-                          // غياب
-                          IconButton(
-                            icon: Icon(
-                              Icons.cancel,
-                              color: current == "غياب"
-                                  ? Colors.red
-                                  : Colors.grey,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                status[s] = "غياب";
-                              });
-                            },
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
 
-            // 🔘 زر الإرسال
-            if (!submitted)
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: submit,
-                  child: const Text("تأكيد الحضور"),
+            // --- Submit Button ---
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: _submitAttendance,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                child: const Text(
+                  "Submit Attendance",
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ),
+            ),
           ],
         ),
       ),

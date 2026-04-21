@@ -42,7 +42,7 @@ class LoginScreen extends StatelessWidget {
 
     if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("يرجى إدخال البريد الإلكتروني أولاً")),
+        const SnackBar(content: Text("Enter your Email first")),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

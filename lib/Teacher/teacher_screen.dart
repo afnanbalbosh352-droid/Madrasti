@@ -25,10 +25,10 @@ class TeacherScreen extends StatelessWidget {
           children: const [
             DrawerHeader(
               decoration: BoxDecoration(color: AppColors.primary),
-              child: Text("مدرسي", style: TextStyle(color: Colors.white)),
+              child: Text("Madrasati", style: TextStyle(color: Colors.white)),
             ),
-            ListTile(title: Text("الإعدادات")),
-            ListTile(title: Text("تسجيل الخروج")),
+            ListTile(title: Text("Setting")),
+            ListTile(title: Text("Log out")),
           ],
         ),
       ),
@@ -83,7 +83,7 @@ class TeacherScreen extends StatelessWidget {
                   const SizedBox(height: 10),
 
                   Text(
-                    "أهلاً أستاذ $name",
+                    "Welcome Teacher $name",
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 22,
@@ -92,7 +92,7 @@ class TeacherScreen extends StatelessWidget {
                   ),
 
                   const Text(
-                    "مدرسة الأمل الحكومية",
+                    "Al-Amal school",
                     style: TextStyle(color: Colors.white70),
                   ),
                 ],
