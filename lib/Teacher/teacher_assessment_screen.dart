@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../General/app_colors.dart';
 
 class TeacherAssessmentScreen extends StatefulWidget {
   const TeacherAssessmentScreen({super.key});
@@ -10,152 +9,154 @@ class TeacherAssessmentScreen extends StatefulWidget {
 }
 
 class _TeacherAssessmentScreenState extends State<TeacherAssessmentScreen> {
-
   final noteController = TextEditingController();
 
-  // 🎯 هيكل المدرسة الحقيقي
+  // 🎯 English School Structure
   final Map<String, Map<String, List<String>>> school = {
-    "العاشر": {
-      "أ": ["أحمد", "محمد"],
-      "ب": ["علي", "سارة"],
+    "Grade 10": {
+      "A": ["Ahmad", "Mohammad"],
+      "B": ["Ali", "Sarah"],
     },
-    "التاسع": {
-      "أ": ["ليان", "يوسف"],
+    "Grade 9": {
+      "A": ["Layan", "Yousef"],
     }
   };
 
-  String selectedGrade = "العاشر";
-  String selectedSection = "أ";
-  String? selectedStudent;
+  // 📊 Evaluation Levels
+  final List<String> evaluationLevels = ["Excellent", "Very Good", "Good", "Poor"];
 
-  int selectedGradeValue = 80;
+  String selectedGrade = "Grade 10";
+  String selectedSection = "A";
+  String? selectedStudent;
+  String selectedEvaluation = "Good"; // Default Evaluation
 
   List<Map<String, dynamic>> assessments = [];
 
   List<String> get sections => school[selectedGrade]!.keys.toList();
-
-  List<String> get students =>
-      school[selectedGrade]![selectedSection]!;
+  List<String> get students => school[selectedGrade]![selectedSection]!;
 
   void addAssessment() {
-    if (selectedStudent == null || noteController.text.isEmpty) return;
+    if (selectedStudent == null || noteController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please select a student and add a note")),
+      );
+      return;
+    }
 
     setState(() {
       assessments.add({
         "student": selectedStudent,
         "grade": selectedGrade,
         "section": selectedSection,
-        "value": selectedGradeValue,
+        "evaluation": selectedEvaluation,
         "note": noteController.text,
       });
 
       noteController.clear();
+      selectedStudent = null; // Reset selection after adding
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text("التقييم الشهري")),
-
+      appBar: AppBar(
+        title: const Text("Monthly Assessment"),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-
-            // 📦 الفورم
+            // 📦 Assessment Form Card
             Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
+              elevation: 4,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-
-                    // 🎓 الصف
-                    DropdownButtonFormField<String>(
-                      initialValue: selectedGrade,
-                      decoration: const InputDecoration(labelText: "الصف"),
-                      items: school.keys.map((g) {
-                        return DropdownMenuItem(value: g, child: Text(g));
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          selectedGrade = val!;
-                          selectedSection = school[val]!.keys.first;
-                          selectedStudent = null;
-                        });
-                      },
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // 🏫 الشعبة
-                    DropdownButtonFormField<String>(
-                      initialValue: selectedSection,
-                      decoration: const InputDecoration(labelText: "الشعبة"),
-                      items: sections.map((s) {
-                        return DropdownMenuItem(value: s, child: Text(s));
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          selectedSection = val!;
-                          selectedStudent = null;
-                        });
-                      },
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // 👤 الطالب (ديناميك)
-                    DropdownButtonFormField<String>(
-                      initialValue: selectedStudent,
-                      hint: const Text("اختر الطالب"),
-                      items: students.map((s) {
-                        return DropdownMenuItem(value: s, child: Text(s));
-                      }).toList(),
-                      onChanged: (val) =>
-                          setState(() => selectedStudent = val),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // 📊 التقييم
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    // Grade & Section Row
+                    Row(
                       children: [
-                        Text("التقييم: $selectedGradeValue"),
-                        Slider(
-                          value: selectedGradeValue.toDouble(),
-                          min: 0,
-                          max: 100,
-                          divisions: 20,
-                          onChanged: (val) {
-                            setState(() {
-                              selectedGradeValue = val.toInt();
-                            });
-                          },
+                        Expanded(
+                          child: DropdownButtonFormField<String>(
+                            value: selectedGrade,
+                            decoration: const InputDecoration(labelText: "Grade"),
+                            items: school.keys.map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
+                            onChanged: (val) {
+                              setState(() {
+                                selectedGrade = val!;
+                                selectedSection = school[val]!.keys.first;
+                                selectedStudent = null;
+                              });
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: DropdownButtonFormField<String>(
+                            value: selectedSection,
+                            decoration: const InputDecoration(labelText: "Section"),
+                            items: sections.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+                            onChanged: (val) {
+                              setState(() {
+                                selectedSection = val!;
+                                selectedStudent = null;
+                              });
+                            },
+                          ),
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 10),
 
-                    // 📝 ملاحظة
+                    // Student Selection
+                    DropdownButtonFormField<String>(
+                      value: selectedStudent,
+                      hint: const Text("Select Student"),
+                      decoration: const InputDecoration(icon: Icon(Icons.person)),
+                      items: students.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+                      onChanged: (val) => setState(() => selectedStudent = val),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // ⭐ Evaluation Level Dropdown (Replaced Slider)
+                    DropdownButtonFormField<String>(
+                      value: selectedEvaluation,
+                      decoration: const InputDecoration(
+                        labelText: "Evaluation Rating",
+                        icon: Icon(Icons.star_rate, color: Colors.amber),
+                      ),
+                      items: evaluationLevels.map((level) {
+                        return DropdownMenuItem(value: level, child: Text(level));
+                      }).toList(),
+                      onChanged: (val) => setState(() => selectedEvaluation = val!),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Teacher's Note
                     TextField(
                       controller: noteController,
                       decoration: const InputDecoration(
-                        labelText: "ملاحظة المعلم",
+                        labelText: "Teacher's Note",
+                        hintText: "Enter comments here...",
+                        prefixIcon: Icon(Icons.note_alt),
                       ),
                     ),
+                    const SizedBox(height: 20),
 
-                    const SizedBox(height: 15),
-
-                    ElevatedButton(
-                      onPressed: addAssessment,
-                      child: const Text("إضافة التقييم"),
+                    // Add Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: addAssessment,
+                        icon: const Icon(Icons.add),
+                        label: const Text("Add Assessment"),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -163,32 +164,28 @@ class _TeacherAssessmentScreenState extends State<TeacherAssessmentScreen> {
             ),
 
             const SizedBox(height: 20),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text("Recent Assessments", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
+            const SizedBox(height: 10),
 
-            // 📋 عرض التقييمات
+            // 📋 List of Assessments
             Expanded(
               child: ListView.builder(
                 itemCount: assessments.length,
                 itemBuilder: (_, i) {
                   final a = assessments[i];
-
                   return Card(
                     margin: const EdgeInsets.only(bottom: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                     child: ListTile(
-                      title: Text("${a["student"]}"),
-                      subtitle: Text(
-                        "${a["grade"]} - ${a["section"]}\n${a["note"]}",
-                      ),
-                      trailing: Text(
-                        "${a["value"]}",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: a["value"] >= 90
-                              ? Colors.green
-                              : Colors.orange,
-                        ),
+                      leading: const CircleAvatar(child: Icon(Icons.person)),
+                      title: Text("${a["student"]} (${a["evaluation"]})"),
+                      subtitle: Text("Grade: ${a["grade"]} | Section: ${a["section"]}\nNote: ${a["note"]}"),
+                      isThreeLine: true,
+                      trailing: Icon(
+                        Icons.check_circle,
+                        color: a["evaluation"] == "Excellent" ? Colors.green : Colors.blue,
                       ),
                     ),
                   );

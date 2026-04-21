@@ -21,11 +21,32 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<LanguageProvider>(
       builder: (context, languageProvider, child) {
+
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Madrasati',
+          
+          theme: ThemeData(
+            useMaterial3: false, 
+            primaryColor: const Color(0xFF0D47A1),            
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Color(0xFF0D47A1), 
+              foregroundColor: Colors.white,   
+              centerTitle: true,
+              elevation: 4,                      
+              iconTheme: IconThemeData(color: Colors.white),
+            ),
+
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0D47A1),
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ),
+          
           locale: languageProvider.appLocale, 
-                    supportedLocales: const [
+          supportedLocales: const [
             Locale('en'),
             Locale('ar'),
           ],
