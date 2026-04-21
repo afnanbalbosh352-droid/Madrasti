@@ -2,5 +2,7 @@
   "login": "Login",
   "national_id": "National ID",
   "password": "Password",
-  "login_button": "Sign in"
+  "login_button": "Sign in",
+  "forgot_password": "Forgot Password?",
+  "reset_email_sent": "Reset link sent to your email"
 }

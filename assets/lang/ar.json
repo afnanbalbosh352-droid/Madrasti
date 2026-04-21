@@ -2,5 +2,7 @@
   "login": "تسجيل الدخول",
   "national_id": "الرقم الوطني",
   "password": "كلمة المرور",
-  "login_button": "دخول"
+  "login_button": "دخول",
+  "forgot_password": "نسيت كلمة المرور؟",
+  "reset_email_sent": "تم إرسال رابط إعادة التعيين لبريدك الإلكتروني"
 }
