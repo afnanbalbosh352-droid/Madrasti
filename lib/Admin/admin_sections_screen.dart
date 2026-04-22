@@ -5,31 +5,50 @@ class AdminSectionsScreen extends StatefulWidget {
   const AdminSectionsScreen({super.key});
 
   @override
-  State<AdminSectionsScreen> createState() =>
-      _AdminSectionsScreenState();
+  State<AdminSectionsScreen> createState() => _AdminSectionsScreenState();
 }
 
 class _AdminSectionsScreenState extends State<AdminSectionsScreen> {
+  final sectionController = TextEditingController();
+  
+  // بيانات تجريبية للمعلمين والمواد (يمكنك جلبها لاحقاً من Firebase)
+  final List<String> teachers = ["Mr. Ahmad", "Ms. Sara", "Mr. Khalid", "Ms. Noor"];
+  final List<String> subjects = ["Math", "Science", "English", "Arabic", "History"];
 
-  final controller = TextEditingController();
+  String? selectedTeacher;
+  String? selectedSubject;
 
-  // 🎯 الصفوف + الشعب
-  final Map<String, List<String>> school = {
-    "العاشر": ["أ", "ب"],
-    "التاسع": ["أ"],
+  // 🎯 تعديل بنية البيانات لتشمل تفاصيل المعلم والمادة
+  final Map<String, List<Map<String, String>>> school = {
+    "Tenth": [
+      {"name": "A", "teacher": "Mr. Ahmad", "subject": "Math"},
+      {"name": "B", "teacher": "Ms. Sara", "subject": "Science"},
+    ],
+    "Ninth": [
+      {"name": "A", "teacher": "Mr. Khalid", "subject": "English"},
+    ],
   };
 
-  String selectedGrade = "العاشر";
-
-  List<String> get sections => school[selectedGrade]!;
+  String selectedGrade = "Tenth";
+  List<Map<String, String>> get sections => school[selectedGrade]!;
 
   void addSection() {
-    if (controller.text.isEmpty) return;
+    if (sectionController.text.isEmpty || selectedTeacher == null || selectedSubject == null) return;
 
     setState(() {
-      school[selectedGrade]!.add(controller.text);
-      controller.clear();
+      school[selectedGrade]!.add({
+        "name": sectionController.text,
+        "teacher": selectedTeacher!,
+        "subject": selectedSubject!,
+      });
+      _clearInputs();
     });
+  }
+
+  void _clearInputs() {
+    sectionController.clear();
+    selectedTeacher = null;
+    selectedSubject = null;
   }
 
   void deleteSection(int index) {
@@ -38,50 +57,68 @@ class _AdminSectionsScreenState extends State<AdminSectionsScreen> {
     });
   }
 
-  void editSection(int index) {
-    controller.text = sections[index];
+  // نافذة الإضافة والتعديل الموحدة
+  void showSectionDialog({int? index}) {
+    bool isEditing = index != null;
+    if (isEditing) {
+      sectionController.text = sections[index]["name"]!;
+      selectedTeacher = sections[index]["teacher"];
+      selectedSubject = sections[index]["subject"];
+    } else {
+      _clearInputs();
+    }
 
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Edit Section"),
-        content: TextField(controller: controller),
-        actions: [
-          TextButton(
-            onPressed: () {
-              setState(() {
-                school[selectedGrade]![index] = controller.text;
-                controller.clear();
-              });
-              Navigator.pop(context);
-            },
-            child: const Text("Save"),
-          )
-        ],
-      ),
-    );
-  }
-
-  void showAddDialog() {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Add Section"),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            hintText: "Section name",
+      builder: (context) => StatefulBuilder( // لاستخدام setState داخل الـ Dialog
+        builder: (context, setDialogState) => AlertDialog(
+          title: Text(isEditing ? "Edit Section" : "Add New Section"),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: sectionController,
+                  decoration: const InputDecoration(labelText: "Section Name (e.g. C)"),
+                ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<String>(
+                  value: selectedTeacher,
+                  hint: const Text("Select Teacher"),
+                  items: teachers.map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
+                  onChanged: (val) => setDialogState(() => selectedTeacher = val),
+                ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<String>(
+                  value: selectedSubject,
+                  hint: const Text("Select Subject"),
+                  items: subjects.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+                  onChanged: (val) => setDialogState(() => selectedSubject = val),
+                ),
+              ],
+            ),
           ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+            ElevatedButton(
+              onPressed: () {
+                if (isEditing) {
+                  setState(() {
+                    school[selectedGrade]![index] = {
+                      "name": sectionController.text,
+                      "teacher": selectedTeacher!,
+                      "subject": selectedSubject!,
+                    };
+                  });
+                } else {
+                  addSection();
+                }
+                Navigator.pop(context);
+              },
+              child: Text(isEditing ? "Save" : "Add"),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              addSection();
-              Navigator.pop(context);
-            },
-            child: const Text("Add"),
-          )
-        ],
       ),
     );
   }
@@ -90,69 +127,55 @@ class _AdminSectionsScreenState extends State<AdminSectionsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-
-      appBar: AppBar(
-        title: const Text("Sections Management"),
-      ),
-
+      appBar: AppBar(title: const Text("Sections Management")),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primary,
-        onPressed: showAddDialog,
+        onPressed: () => showSectionDialog(),
         child: const Icon(Icons.add),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-
-            // 🎓 اختيار الصف
-            DropdownButtonFormField(
-              initialValue: selectedGrade,
-              decoration: const InputDecoration(labelText: "Select Class"),
-              items: school.keys.map((g) {
-                return DropdownMenuItem(value: g, child: Text(g));
-              }).toList(),
-              onChanged: (val) {
-                setState(() {
-                  selectedGrade = val!;
-                });
-              },
+            DropdownButtonFormField<String>(
+              value: selectedGrade,
+              decoration: const InputDecoration(labelText: "Select Class", border: OutlineInputBorder()),
+              items: school.keys.map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
+              onChanged: (val) => setState(() => selectedGrade = val!),
             ),
-
-            const SizedBox(height: 15),
-
-            // 📋 الشعب
+            const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
                 itemCount: sections.length,
                 itemBuilder: (_, i) {
                   final s = sections[i];
-
                   return Card(
                     margin: const EdgeInsets.only(bottom: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     child: ListTile(
-                      leading:
-                      Icon(Icons.group, color: AppColors.primary),
-
-                      title: Text("Section $s"),
-
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      leading: CircleAvatar(
+                        backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                        child: Icon(Icons.group, color: AppColors.primary),
+                      ),
+                      title: Text("Section ${s['name']}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Teacher: ${s['teacher']}"),
+                          Text("Subject: ${s['subject']}", style: const TextStyle(color: Colors.grey)),
+                        ],
+                      ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-
                           IconButton(
-                            icon: const Icon(Icons.edit,
-                                color: Colors.blue),
-                            onPressed: () => editSection(i),
+                            icon: const Icon(Icons.edit, color: Colors.blue),
+                            onPressed: () => showSectionDialog(index: i),
                           ),
-
                           IconButton(
-                            icon: const Icon(Icons.delete,
-                                color: Colors.red),
+                            icon: const Icon(Icons.delete, color: Colors.red),
                             onPressed: () => deleteSection(i),
                           ),
                         ],

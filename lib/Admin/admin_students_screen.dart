@@ -15,22 +15,22 @@ class _AdminStudentsScreenState extends State<AdminStudentsScreen> {
   final idController = TextEditingController();
 
   // 🎯 هيكل المدرسة
-  final Map<String, List<String>> school = {
-    "العاشر": ["أ", "ب"],
-    "التاسع": ["أ"],
-  };
+ final Map<String, List<String>> school = {
+  "Tenth": ["A", "B"],
+  "Ninth": ["A"],
+};
 
-  String selectedGrade = "العاشر";
-  String selectedSection = "أ";
+String selectedGrade = "Tenth";
+String selectedSection = "A";
 
-  List<Map<String, String>> students = [
-    {
-      "name": "أحمد",
-      "id": "111",
-      "grade": "العاشر",
-      "section": "أ"
-    }
-  ];
+List<Map<String, String>> students = [
+  {
+    "name": "Ahmad",
+    "id": "111",
+    "grade": "Tenth",
+    "section": "A"
+  }
+];
 
   List<String> get sections => school[selectedGrade]!;
 

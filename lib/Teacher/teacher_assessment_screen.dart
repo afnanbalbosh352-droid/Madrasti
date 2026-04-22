@@ -81,7 +81,7 @@ class _TeacherAssessmentScreenState extends State<TeacherAssessmentScreen> {
                       children: [
                         Expanded(
                           child: DropdownButtonFormField<String>(
-                            value: selectedGrade,
+                            initialValue: selectedGrade,
                             decoration: const InputDecoration(labelText: "Grade"),
                             items: school.keys.map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
                             onChanged: (val) {
@@ -96,7 +96,7 @@ class _TeacherAssessmentScreenState extends State<TeacherAssessmentScreen> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: DropdownButtonFormField<String>(
-                            value: selectedSection,
+                            initialValue: selectedSection,
                             decoration: const InputDecoration(labelText: "Section"),
                             items: sections.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
                             onChanged: (val) {
@@ -113,7 +113,7 @@ class _TeacherAssessmentScreenState extends State<TeacherAssessmentScreen> {
 
                     // Student Selection
                     DropdownButtonFormField<String>(
-                      value: selectedStudent,
+                      initialValue: selectedStudent,
                       hint: const Text("Select Student"),
                       decoration: const InputDecoration(icon: Icon(Icons.person)),
                       items: students.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
@@ -123,7 +123,7 @@ class _TeacherAssessmentScreenState extends State<TeacherAssessmentScreen> {
 
                     // ⭐ Evaluation Level Dropdown (Replaced Slider)
                     DropdownButtonFormField<String>(
-                      value: selectedEvaluation,
+                      initialValue: selectedEvaluation,
                       decoration: const InputDecoration(
                         labelText: "Evaluation Rating",
                         icon: Icon(Icons.star_rate, color: Colors.amber),

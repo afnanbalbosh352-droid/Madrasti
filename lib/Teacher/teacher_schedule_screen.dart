@@ -72,7 +72,7 @@ class _TeacherScheduleScreenState extends State<TeacherScheduleScreen> {
                     // قائمة اختيار الصف (عاشر / سابع)
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        value: selectedGrade, // استخدام value بدلاً من initialValue للإصلاح
+                        initialValue: selectedGrade, // استخدام value بدلاً من initialValue للإصلاح
                         decoration: const InputDecoration(labelText: "Grade"),
                         items: schedule.keys.map((g) {
                           return DropdownMenuItem(value: g, child: Text(g));
@@ -90,7 +90,7 @@ class _TeacherScheduleScreenState extends State<TeacherScheduleScreen> {
                     // قائمة اختيار الشعبة
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        value: selectedSection, // استخدام value بدلاً من initialValue للإصلاح
+                        initialValue: selectedSection, // استخدام value بدلاً من initialValue للإصلاح
                         decoration: const InputDecoration(labelText: "Section"),
                         items: sections.map((s) {
                           return DropdownMenuItem(value: s, child: Text(s));

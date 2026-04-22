@@ -17,28 +17,28 @@ class _AdminTeachersScreenState
 
   // 🎯 بيانات النظام
   final Map<String, List<String>> school = {
-    "العاشر": ["أ", "ب"],
-    "التاسع": ["أ"],
-  };
+  "Tenth": ["A", "B"],
+  "Ninth": ["A"],
+};
 
-  final List<String> subjects = [
-    "رياضيات",
-    "علوم",
-    "إنجليزي",
-    "عربي"
-  ];
+final List<String> subjects = [
+  "Math",
+  "Science",
+  "English",
+  "Arabic"
+];
 
-  String selectedGrade = "العاشر";
-  String selectedSection = "أ";
-  String selectedSubject = "رياضيات";
+String selectedGrade = "Tenth";
+String selectedSection = "A";
+String selectedSubject = "Math";
 
   List<Map<String, dynamic>> teachers = [
     {
-      "name": "أستاذ خالد",
-      "id": "444",
-      "grade": "العاشر",
-      "section": "أ",
-      "subject": "رياضيات"
+      "name": "Mr. Khaled",
+"id": "444",
+"grade": "Tenth",
+"section": "A",
+"subject": "Math"
     }
   ];
 

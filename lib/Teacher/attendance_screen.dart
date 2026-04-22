@@ -87,7 +87,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               children: [
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: selectedGrade,
+                    initialValue: selectedGrade,
                     decoration: const InputDecoration(
                       labelText: "Grade",
                       border: OutlineInputBorder(),
@@ -107,7 +107,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: selectedSection,
+                    initialValue: selectedSection,
                     decoration: const InputDecoration(
                       labelText: "Section",
                       border: OutlineInputBorder(),
