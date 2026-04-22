@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../General/app_colors.dart';
-import '../General/login_screen.dart'; // تأكدي أن المسار صحيح في مشروعك
-
+import '../General/login_screen.dart'; 
 import 'activities_screen.dart';
 import 'notifications_screen.dart';
 import 'schedule_exam_screen.dart';
@@ -11,7 +10,7 @@ import 'grades_screen.dart';
 import 'monthly_assessment_screen.dart';
 import 'teacher_list_screen.dart';
 import 'attendance_screen.dart';
-
+import 'penalties_screen.dart';
 class StudentScreen extends StatelessWidget {
   final String name;
 
@@ -22,7 +21,6 @@ class StudentScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
 
-      // ☰ القائمة الجانبية (Drawer) بتصميم مخصص
       drawer: Drawer(
         child: Column(
           children: [
@@ -123,7 +121,6 @@ class StudentScreen extends StatelessWidget {
               mainAxisSpacing: 15,
               childAspectRatio: 1.05,
               children: [
-                // تم التأكد من عدم وجود const أمام الاستدعاءات لحل الخطوط الحمراء
                 buildCard(context, Icons.event_note_rounded, "Activities", ActivitiesScreen()),
                 buildCard(context, Icons.quiz_rounded, "Exam Schedule", ScheduleExamScreen()),
                 buildCard(context, Icons.assignment_rounded, "Assignments", AssignmentsScreen()),
@@ -132,7 +129,8 @@ class StudentScreen extends StatelessWidget {
                 buildCard(context, Icons.analytics_rounded, "Assessment", MonthlyAssessmentScreen()),
                 buildCard(context, Icons.chat_bubble_outline_rounded, "Teacher Chat", TeacherListScreen()),
                 buildCard(context, Icons.calendar_today_rounded, "Attendance", AttendanceScreen()),
-              ],
+                buildCard( context, Icons.report_problem_rounded, "Warnings &\nPenalties" ,const PenaltiesScreen()),  
+                        ],
             ),
           ),
         ],
@@ -140,7 +138,6 @@ class StudentScreen extends StatelessWidget {
     );
   }
 
-  // 🛠️ دالة بناء أيقونة الإشعارات مع النقطة الحمراء
   Widget _buildNotificationIcon(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationsScreen())),
