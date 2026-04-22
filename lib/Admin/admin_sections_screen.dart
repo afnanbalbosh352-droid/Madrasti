@@ -83,14 +83,14 @@ class _AdminSectionsScreenState extends State<AdminSectionsScreen> {
                 ),
                 const SizedBox(height: 10),
                 DropdownButtonFormField<String>(
-                  value: selectedTeacher,
+                  initialValue: selectedTeacher,
                   hint: const Text("Select Teacher"),
                   items: teachers.map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
                   onChanged: (val) => setDialogState(() => selectedTeacher = val),
                 ),
                 const SizedBox(height: 10),
                 DropdownButtonFormField<String>(
-                  value: selectedSubject,
+                  initialValue: selectedSubject,
                   hint: const Text("Select Subject"),
                   items: subjects.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
                   onChanged: (val) => setDialogState(() => selectedSubject = val),
@@ -138,7 +138,7 @@ class _AdminSectionsScreenState extends State<AdminSectionsScreen> {
         child: Column(
           children: [
             DropdownButtonFormField<String>(
-              value: selectedGrade,
+              initialValue: selectedGrade,
               decoration: const InputDecoration(labelText: "Select Class", border: OutlineInputBorder()),
               items: school.keys.map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
               onChanged: (val) => setState(() => selectedGrade = val!),

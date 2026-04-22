@@ -85,7 +85,7 @@ class _AdminGradesApprovalScreenState extends State<AdminGradesScreen> {
                 child: Column(
                   children: [
                     DropdownButtonFormField<String>(
-                      value: selectedSemester,
+                      initialValue: selectedSemester,
                       decoration: const InputDecoration(labelText: "Academic Period", prefixIcon: Icon(Icons.history)),
                       items: ["Current Semester", "Previous Semester"].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
                       onChanged: (val) => setState(() => selectedSemester = val!),
@@ -94,7 +94,7 @@ class _AdminGradesApprovalScreenState extends State<AdminGradesScreen> {
                       children: [
                         Expanded(
                           child: DropdownButtonFormField<String>(
-                            value: selectedGrade,
+                            initialValue: selectedGrade,
                             decoration: const InputDecoration(labelText: "Grade"),
                             items: ["Tenth", "Ninth"].map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
                             onChanged: (val) => setState(() => selectedGrade = val!),
@@ -103,7 +103,7 @@ class _AdminGradesApprovalScreenState extends State<AdminGradesScreen> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: DropdownButtonFormField<String>(
-                            value: selectedSection,
+                            initialValue: selectedSection,
                             decoration: const InputDecoration(labelText: "Section"),
                             items: ["A", "B"].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
                             onChanged: (val) => setState(() => selectedSection = val!),

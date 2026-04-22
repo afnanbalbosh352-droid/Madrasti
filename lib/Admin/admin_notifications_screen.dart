@@ -80,7 +80,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
                   children: [
                     // قائمة اختيار المستقبلين المفصلة
                     DropdownButtonFormField<String>(
-                      value: selectedRecipient,
+                      initialValue: selectedRecipient,
                       decoration: const InputDecoration(
                         labelText: "Send To",
                         prefixIcon: Icon(Icons.person_search),

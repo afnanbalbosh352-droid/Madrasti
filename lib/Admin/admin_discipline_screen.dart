@@ -62,7 +62,7 @@ class _AdminPenaltiesScreenState extends State<AdminPenaltiesScreen> {
                       children: [
                         Expanded(
                           child: DropdownButtonFormField<String>(
-                            value: selectedGrade,
+                            initialValue: selectedGrade,
                             decoration: const InputDecoration(labelText: "Grade", border: UnderlineInputBorder()),
                             items: ["Tenth", "Ninth", "Eighth"].map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
                             onChanged: (val) => setState(() => selectedGrade = val!),
@@ -71,7 +71,7 @@ class _AdminPenaltiesScreenState extends State<AdminPenaltiesScreen> {
                         const SizedBox(width: 15),
                         Expanded(
                           child: DropdownButtonFormField<String>(
-                            value: selectedSection,
+                            initialValue: selectedSection,
                             decoration: const InputDecoration(labelText: "Section", border: UnderlineInputBorder()),
                             items: ["A", "B", "C"].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
                             onChanged: (val) => setState(() => selectedSection = val!),
@@ -83,7 +83,7 @@ class _AdminPenaltiesScreenState extends State<AdminPenaltiesScreen> {
 
                     // اختيار اسم الطالب
                     DropdownButtonFormField<String>(
-                      value: selectedStudent,
+                      initialValue: selectedStudent,
                       hint: const Text("Select Student Name"),
                       decoration: const InputDecoration(
                         prefixIcon: Icon(Icons.person_outline),
@@ -96,7 +96,7 @@ class _AdminPenaltiesScreenState extends State<AdminPenaltiesScreen> {
 
                     // اختيار نوع العقوبة
                     DropdownButtonFormField<String>(
-                      value: selectedType,
+                      initialValue: selectedType,
                       decoration: const InputDecoration(
                         labelText: "Penalty Type",
                         prefixIcon: Icon(Icons.gavel_outlined),
