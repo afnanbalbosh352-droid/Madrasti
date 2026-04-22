@@ -5,167 +5,164 @@ class AdminAttendanceScreen extends StatefulWidget {
   const AdminAttendanceScreen({super.key});
 
   @override
-  State<AdminAttendanceScreen> createState() =>
-      _AdminAttendanceScreenState();
+  State<AdminAttendanceScreen> createState() => _AdminAttendanceScreenState();
 }
 
-class _AdminAttendanceScreenState
-    extends State<AdminAttendanceScreen> {
+class _AdminAttendanceScreenState extends State<AdminAttendanceScreen> {
+  // 🎯 Mock Data
+  final List<Map<String, dynamic>> atRiskStudents = [
+    {"id": "s1", "name": "Zaid Ali", "absences": 9, "class": "10-A"},
+    {"id": "s2", "name": "Mona Omar", "absences": 7, "class": "9-B"},
+  ];
 
-  // 🎯 هيكل المدرسة
-  final Map<String, Map<String, List<String>>> school = {
-    "العاشر": {
-      "أ": ["أحمد", "محمد", "علي"],
-      "ب": ["سارة", "ليان"],
+  final Map<String, Map<String, List<Map<String, String>>>> schoolData = {
+    "Tenth": {
+      "A": [
+        {"id": "1", "name": "Ahmed", "status": "Present"},
+        {"id": "2", "name": "Mohamed", "status": "Absent"},
+        {"id": "3", "name": "Ali", "status": "Late"},
+      ],
+      "B": [
+        {"id": "4", "name": "Sarah", "status": "Present"},
+        {"id": "5", "name": "Layan", "status": "Present"},
+      ],
     },
-    "التاسع": {
-      "أ": ["يوسف", "رامي"],
+    "Ninth": {
+      "A": [
+        {"id": "6", "name": "Youssef", "status": "Absent"},
+        {"id": "7", "name": "Rami", "status": "Present"},
+      ],
     },
   };
 
-  String selectedGrade = "العاشر";
-  String selectedSection = "أ";
+  String selectedGrade = "Tenth";
+  String selectedSection = "A";
 
-  DateTime selectedDate = DateTime.now();
-
-  Map<String, String> attendance = {};
-
-  List<String> get sections =>
-      school[selectedGrade]!.keys.toList();
-
-  List<String> get students =>
-      school[selectedGrade]![selectedSection]!;
-
-  void setAll(String value) {
-    setState(() {
-      for (var s in students) {
-        attendance[s] = value;
-      }
-    });
-  }
-
-  void save() {
+  void sendWarningNotification(String name) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("تم حفظ التعديلات")),
+      SnackBar(
+        content: Text("Warning Notification sent to $name!"),
+        backgroundColor: Colors.orange.shade800,
+        behavior: SnackBarBehavior.floating,
+      ),
     );
   }
 
-  void pickDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(2024),
-      lastDate: DateTime(2030),
+  void saveChanges() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Attendance records finalized and saved!"),
+        backgroundColor: Colors.green,
+      ),
     );
+  }
 
-    if (picked != null) {
-      setState(() => selectedDate = picked);
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case "Present": return Colors.green;
+      case "Absent": return Colors.red;
+      case "Late": return Colors.orange;
+      case "Excused": return Colors.blue;
+      default: return Colors.black;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // جلب القائمة الحالية بناءً على الاختيار
+    List<Map<String, String>> currentStudents = schoolData[selectedGrade]![selectedSection]!;
+
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text("Attendance Control")),
-
+      appBar: AppBar(
+        title: const Text("Attendance Correction"),
+        centerTitle: true,
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-            // 📦 FILTER CARD
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+            // 🔥 SECTION 1: AT RISK STUDENTS
+            if (atRiskStudents.isNotEmpty) ...[
+              const Text(
+                "Students at Risk (High Absence)",
+                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent),
               ),
+              const SizedBox(height: 8),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: Colors.red.shade100),
+                ),
+                child: ExpansionTile(
+                  leading: const Icon(Icons.warning_amber_rounded, color: Colors.red),
+                  title: Text(
+                    "Action Required: ${atRiskStudents.length} Students",
+                    style: const TextStyle(color: Colors.red, fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  children: atRiskStudents.map((student) {
+                    return ListTile(
+                      title: Text(student["name"], style: const TextStyle(fontSize: 14)),
+                      subtitle: Text("Absences: ${student["absences"]} days | ${student["class"]}", 
+                          style: const TextStyle(fontSize: 12)),
+                      trailing: ElevatedButton.icon(
+                        onPressed: () => sendWarningNotification(student["name"]),
+                        icon: const Icon(Icons.notifications_active, size: 16, color: Colors.white),
+                        label: const Text("Warn", style: TextStyle(color: Colors.white)),
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+
+            // 📦 SECTION 2: CLASS NAVIGATION
+            const Text(
+              "Review Teacher Lists",
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey),
+            ),
+            const SizedBox(height: 8),
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
                   children: [
-
-                    // 🎓 الصف + الشعبة
-                    Row(
-                      children: [
-
-                        Expanded(
-                          child: DropdownButtonFormField(
-                            initialValue: selectedGrade,
-                            decoration:
-                            const InputDecoration(labelText: "Grade"),
-                            items: school.keys.map((g) {
-                              return DropdownMenuItem(
-                                  value: g, child: Text(g));
-                            }).toList(),
-                            onChanged: (val) {
-                              setState(() {
-                                selectedGrade = val!;
-                                selectedSection =
-                                    school[val]!.keys.first;
-                                attendance.clear();
-                              });
-                            },
-                          ),
-                        ),
-
-                        const SizedBox(width: 10),
-
-                        Expanded(
-                          child: DropdownButtonFormField(
-                            initialValue: selectedSection,
-                            decoration:
-                            const InputDecoration(labelText: "Section"),
-                            items: sections.map((s) {
-                              return DropdownMenuItem(
-                                  value: s, child: Text(s));
-                            }).toList(),
-                            onChanged: (val) {
-                              setState(() {
-                                selectedSection = val!;
-                                attendance.clear();
-                              });
-                            },
-                          ),
-                        ),
-                      ],
+                    Expanded(
+                      child: DropdownButton<String>(
+                        value: selectedGrade,
+                        isExpanded: true,
+                        underline: const SizedBox(),
+                        items: schoolData.keys.map((g) {
+                          return DropdownMenuItem(value: g, child: Text("Grade $g"));
+                        }).toList(),
+                        onChanged: (val) {
+                          setState(() {
+                            selectedGrade = val!;
+                            selectedSection = schoolData[val]!.keys.first;
+                          });
+                        },
+                      ),
                     ),
-
-                    const SizedBox(height: 10),
-
-                    // 📅 التاريخ
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            "Date: ${selectedDate.year}-${selectedDate.month}-${selectedDate.day}",
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: pickDate,
-                          child: const Text("Change"),
-                        )
-                      ],
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // 🔘 Quick Actions
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () => setAll("Present"),
-                            child: const Text("All Present"),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () => setAll("Absent"),
-                            child: const Text("All Absent"),
-                          ),
-                        ),
-                      ],
+                    const Text(" | "),
+                    Expanded(
+                      child: DropdownButton<String>(
+                        value: selectedSection,
+                        isExpanded: true,
+                        underline: const SizedBox(),
+                        items: schoolData[selectedGrade]!.keys.map((s) {
+                          return DropdownMenuItem(value: s, child: Text("Section $s"));
+                        }).toList(),
+                        onChanged: (val) {
+                          setState(() {
+                            selectedSection = val!;
+                          });
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -174,33 +171,34 @@ class _AdminAttendanceScreenState
 
             const SizedBox(height: 15),
 
-            // 📋 LIST
+            // 📋 SECTION 3: LIST
             Expanded(
               child: ListView.builder(
-                itemCount: students.length,
-                itemBuilder: (_, i) {
-                  final s = students[i];
-
+                itemCount: currentStudents.length,
+                itemBuilder: (context, index) {
+                  final student = currentStudents[index];
                   return Card(
                     margin: const EdgeInsets.only(bottom: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     child: ListTile(
-                      title: Text(s),
-
+                      title: Text(student["name"]!, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: Text("Current: ${student["status"]}", 
+                          style: TextStyle(color: _getStatusColor(student["status"]!), fontSize: 12)),
                       trailing: DropdownButton<String>(
-                        value: attendance[s],
-                        hint: const Text("Status"),
-                        items: ["Present", "Absent"].map((e) {
-                          return DropdownMenuItem(
-                              value: e, child: Text(e));
-                        }).toList(),
-                        onChanged: (val) {
+                        value: student["status"],
+                        underline: const SizedBox(),
+                        onChanged: (newStatus) {
                           setState(() {
-                            attendance[s] = val!;
+                            student["status"] = newStatus!;
                           });
                         },
+                        items: ["Present", "Absent", "Late", "Excused"].map((status) {
+                          return DropdownMenuItem(
+                            value: status,
+                            child: Text(status, 
+                                style: TextStyle(color: _getStatusColor(status), fontWeight: FontWeight.bold)),
+                          );
+                        }).toList(),
                       ),
                     ),
                   );
@@ -208,11 +206,20 @@ class _AdminAttendanceScreenState
               ),
             ),
 
-            // 💾 SAVE
-            ElevatedButton(
-              onPressed: save,
-              child: const Text("Save Changes"),
-            )
+            // 💾 SAVE BUTTON
+            SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                ),
+                onPressed: saveChanges,
+                child: const Text("Confirm & Sync to Firebase", 
+                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+              ),
+            ),
           ],
         ),
       ),

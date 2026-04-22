@@ -9,6 +9,7 @@ import 'admin_grades_screen.dart';
 import 'admin_attendance_screen.dart';
 import 'admin_class_schedule_screen.dart';
 
+
 class AdminScreen extends StatelessWidget {
   final String name;
 
@@ -21,7 +22,7 @@ class AdminScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // 🔵 Header
+            // 🔵 Header (تم حذف أيقونة الجرس منه)
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(16, 20, 16, 25),
@@ -38,8 +39,9 @@ class AdminScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: const [
+                      // أيقونة لوحة التحكم (بقيت كما هي)
                       Icon(Icons.admin_panel_settings, color: Colors.white),
-                      Icon(Icons.notifications, color: Colors.white),
+                      // ❌ تم حذف Icon(Icons.notifications) من هنا لأن الأدمن لا يستقبل إشعارات
                     ],
                   ),
                   const SizedBox(height: 10),
@@ -58,8 +60,10 @@ class AdminScreen extends StatelessWidget {
                 ],
               ),
             ),
+            
             const SizedBox(height: 10),
-            // 📦 Grid
+
+            // 📦 Grid (الأزرار الكبيرة بقيت كما هي لكي يتمكن المدير من الإرسال)
             Expanded(
               child: GridView(
                 padding: const EdgeInsets.all(16),
@@ -70,13 +74,12 @@ class AdminScreen extends StatelessWidget {
                   childAspectRatio: 1.1,
                 ),
                 children: [
-                 buildCard(context, Icons.people, "Students", AdminStudentsScreen()),
+                  buildCard(context, Icons.people, "Students", AdminStudentsScreen()),
                   buildCard(context, Icons.person, "Teachers", AdminTeachersScreen()),
                   buildCard(context, Icons.hd, "Sections", AdminSectionsScreen()),
-                  
                   buildCard(context, Icons.table_chart, "Class Schedule", const AdminClassScheduleScreen()),
-
                   buildCard(context, Icons.event, "Activities Approval", const AdminActivitiesScreen()),
+                  // زر الإشعارات الكبير بقي لكي يرسل المدير الإعلانات (مثل جدول الفاينل)
                   buildCard(context, Icons.notifications, "Notifications", AdminNotificationsScreen()),
                   buildCard(context, Icons.grade, "Grades Review", AdminGradesScreen()),
                   buildCard(context, Icons.fact_check, "Attendance", AdminAttendanceScreen()),
@@ -89,6 +92,7 @@ class AdminScreen extends StatelessWidget {
     );
   }
 
+  // ودجت بناء الكروت (لم تتغير)
   Widget buildCard(BuildContext context, IconData icon, String title, Widget page) {
     return Card(
       elevation: 4,
@@ -96,7 +100,6 @@ class AdminScreen extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {
-          // أضف Print هنا لتتأكد أن الزر ينضغط في الـ Terminal
           print("Card $title clicked!"); 
           Navigator.push(
             context,

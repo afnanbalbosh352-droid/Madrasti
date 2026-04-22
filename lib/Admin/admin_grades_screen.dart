@@ -5,206 +5,108 @@ class AdminGradesScreen extends StatefulWidget {
   const AdminGradesScreen({super.key});
 
   @override
-  State<AdminGradesScreen> createState() =>
-      _AdminGradesScreenState();
+  State<AdminGradesScreen> createState() => _AdminGradesApprovalScreenState();
 }
 
-class _AdminGradesScreenState extends State<AdminGradesScreen> {
+class _AdminGradesApprovalScreenState extends State<AdminGradesScreen> {
+  String selectedGrade = "Tenth";
+  String selectedSection = "A";
+  String selectedSemester = "Current Semester";
 
-  final gradeController = TextEditingController();
-
-  // 🎯 هيكل المدرسة
-  final Map<String, Map<String, List<String>>> school = {
-    "العاشر": {
-      "أ": ["أحمد", "محمد"],
-      "ب": ["علي", "سارة"],
-    },
-    "التاسع": {
-      "أ": ["يوسف", "رامي"],
-    }
-  };
-
-  String selectedGrade = "العاشر";
-  String selectedSection = "أ";
-  String? selectedStudent;
-
-  String selectedSubject = "رياضيات";
-  String selectedExam = "امتحان أول";
-
-  final List<String> subjects = ["رياضيات", "علوم", "إنجليزي"];
-  final List<String> exams = ["امتحان أول", "امتحان ثاني", "نهائي"];
-
-  List<Map<String, dynamic>> grades = [
+  // بيانات الطلاب مع كشف كامل للعلامات
+  final List<Map<String, dynamic>> studentsGrades = [
     {
-      "student": "أحمد",
-      "grade": "العاشر",
-      "section": "أ",
-      "subject": "رياضيات",
-      "exam": "امتحان أول",
-      "value": "85",
-    }
+      "name": "Ahmed Mohamed",
+      "subject": "Mathematics",
+      "first": 18,
+      "second": 19,
+      "mid": 25,
+      "participation": 10,
+      "total": 72,
+      "isApproved": false,
+    },
+    {
+      "name": "Sami Ali",
+      "subject": "Mathematics",
+      "first": 15,
+      "second": 14,
+      "mid": 20,
+      "participation": 8,
+      "total": 57,
+      "isApproved": true,
+    },
   ];
 
-  List<String> get sections =>
-      school[selectedGrade]!.keys.toList();
-
-  List<String> get students =>
-      school[selectedGrade]![selectedSection]!;
-
-  void updateGrade(int index) {
-    gradeController.text = grades[index]["value"];
-
+  // دالة لإظهار معاينة الشهادة (Report Card Pop-up)
+  void _showReportCardPreview(String name) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Edit Grade"),
-        content: TextField(
-          controller: gradeController,
-          keyboardType: TextInputType.number,
+      builder: (context) => AlertDialog(
+        title: const Text("Report Card Preview"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.picture_as_pdf, size: 50, color: Colors.red),
+            const SizedBox(height: 10),
+            Text("Generating official report card for $name..."),
+          ],
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              setState(() {
-                grades[index]["value"] = gradeController.text;
-              });
-              Navigator.pop(context);
-            },
-            child: const Text("Save"),
-          )
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Close"),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Download PDF"),
+          ),
         ],
       ),
     );
-  }
-
-  void deleteGrade(int index) {
-    setState(() {
-      grades.removeAt(index);
-    });
-  }
-
-  List<Map<String, dynamic>> get filteredGrades {
-    return grades.where((g) {
-      return g["grade"] == selectedGrade &&
-          g["section"] == selectedSection &&
-          (selectedStudent == null ||
-              g["student"] == selectedStudent) &&
-          g["subject"] == selectedSubject &&
-          g["exam"] == selectedExam;
-    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text("Grades Control")),
-
+      appBar: AppBar(
+        title: const Text("Final Grades Approval"),
+        centerTitle: true,
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-
-            // 📦 FILTER
+            // قسم الفلترة
             Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12.0),
                 child: Column(
                   children: [
-
-                    // 🎓 الصف + الشعبة
+                    DropdownButtonFormField<String>(
+                      value: selectedSemester,
+                      decoration: const InputDecoration(labelText: "Academic Period", prefixIcon: Icon(Icons.history)),
+                      items: ["Current Semester", "Previous Semester"].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+                      onChanged: (val) => setState(() => selectedSemester = val!),
+                    ),
                     Row(
                       children: [
                         Expanded(
-                          child: DropdownButtonFormField(
-                            initialValue: selectedGrade,
-                            decoration:
-                            const InputDecoration(labelText: "Grade"),
-                            items: school.keys.map((g) {
-                              return DropdownMenuItem(
-                                  value: g, child: Text(g));
-                            }).toList(),
-                            onChanged: (val) {
-                              setState(() {
-                                selectedGrade = val!;
-                                selectedSection =
-                                    school[val]!.keys.first;
-                                selectedStudent = null;
-                              });
-                            },
+                          child: DropdownButtonFormField<String>(
+                            value: selectedGrade,
+                            decoration: const InputDecoration(labelText: "Grade"),
+                            items: ["Tenth", "Ninth"].map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
+                            onChanged: (val) => setState(() => selectedGrade = val!),
                           ),
                         ),
-
                         const SizedBox(width: 10),
-
                         Expanded(
-                          child: DropdownButtonFormField(
-                            initialValue: selectedSection,
-                            decoration:
-                            const InputDecoration(labelText: "Section"),
-                            items: sections.map((s) {
-                              return DropdownMenuItem(
-                                  value: s, child: Text(s));
-                            }).toList(),
-                            onChanged: (val) {
-                              setState(() {
-                                selectedSection = val!;
-                                selectedStudent = null;
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // 👤 الطالب
-                    DropdownButtonFormField(
-                      initialValue: selectedStudent,
-                      hint: const Text("Student (optional)"),
-                      items: students.map((s) {
-                        return DropdownMenuItem(value: s, child: Text(s));
-                      }).toList(),
-                      onChanged: (val) =>
-                          setState(() => selectedStudent = val),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // 📚 المادة + الامتحان
-                    Row(
-                      children: [
-                        Expanded(
-                          child: DropdownButtonFormField(
-                            initialValue: selectedSubject,
-                            decoration:
-                            const InputDecoration(labelText: "Subject"),
-                            items: subjects.map((s) {
-                              return DropdownMenuItem(
-                                  value: s, child: Text(s));
-                            }).toList(),
-                            onChanged: (val) =>
-                                setState(() => selectedSubject = val!),
-                          ),
-                        ),
-
-                        const SizedBox(width: 10),
-
-                        Expanded(
-                          child: DropdownButtonFormField(
-                            initialValue: selectedExam,
-                            decoration:
-                            const InputDecoration(labelText: "Exam"),
-                            items: exams.map((e) {
-                              return DropdownMenuItem(
-                                  value: e, child: Text(e));
-                            }).toList(),
-                            onChanged: (val) =>
-                                setState(() => selectedExam = val!),
+                          child: DropdownButtonFormField<String>(
+                            value: selectedSection,
+                            decoration: const InputDecoration(labelText: "Section"),
+                            items: ["A", "B"].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+                            onChanged: (val) => setState(() => selectedSection = val!),
                           ),
                         ),
                       ],
@@ -216,55 +118,63 @@ class _AdminGradesScreenState extends State<AdminGradesScreen> {
 
             const SizedBox(height: 15),
 
-            // 📋 LIST
+            // قائمة عرض كشوفات العلامات
             Expanded(
               child: ListView.builder(
-                itemCount: filteredGrades.length,
-                itemBuilder: (_, i) {
-                  final g = filteredGrades[i];
-                  final value = int.tryParse(g["value"]) ?? 0;
-
+                itemCount: studentsGrades.length,
+                itemBuilder: (context, index) {
+                  final student = studentsGrades[index];
                   return Card(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: ListTile(
-                      leading:
-                      Icon(Icons.grade, color: AppColors.primary),
-
-                      title: Text(g["student"]),
-
-                      subtitle: Text(
-                          "${g["subject"]} (${g["exam"]})"),
-
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
+                    margin: const EdgeInsets.only(bottom: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-
-                          Text(
-                            g["value"],
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: value >= 90
-                                  ? Colors.green
-                                  : Colors.orange,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(student["name"], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                              Icon(
+                                student["isApproved"] ? Icons.check_circle : Icons.pending,
+                                color: student["isApproved"] ? Colors.green : Colors.orange,
+                              ),
+                            ],
                           ),
-
-                          IconButton(
-                            icon: const Icon(Icons.edit,
-                                color: Colors.blue),
-                            onPressed: () =>
-                                updateGrade(grades.indexOf(g)),
+                          Text(student["subject"], style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+                          const Divider(),
+                          // عرض تفاصيل العلامات الأربعة + المجموع
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              _buildGradeBox("1st", student["first"]),
+                              _buildGradeBox("2nd", student["second"]),
+                              _buildGradeBox("Mid", student["mid"]),
+                              _buildGradeBox("Part.", student["participation"]),
+                              _buildGradeBox("Total", student["total"], isFinal: true),
+                            ],
                           ),
-
-                          IconButton(
-                            icon: const Icon(Icons.delete,
-                                color: Colors.red),
-                            onPressed: () =>
-                                deleteGrade(grades.indexOf(g)),
-                          ),
+                          const SizedBox(height: 12),
+                          // أزرار المدير
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              if (!student["isApproved"])
+                                ElevatedButton.icon(
+                                  onPressed: () => setState(() => student["isApproved"] = true),
+                                  icon: const Icon(Icons.done_all, size: 18, color: Colors.white),
+                                  label: const Text("Approve", style: TextStyle(color: Colors.white)),
+                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                                )
+                              else
+                                OutlinedButton.icon(
+                                  onPressed: () => _showReportCardPreview(student["name"]),
+                                  icon: const Icon(Icons.picture_as_pdf, size: 18),
+                                  label: const Text("View Report Card"),
+                                ),
+                            ],
+                          )
                         ],
                       ),
                     ),
@@ -272,9 +182,48 @@ class _AdminGradesScreenState extends State<AdminGradesScreen> {
                 },
               ),
             ),
+
+            // زر الاعتماد الكلي لطباعة كل شهادات الصف
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.print_rounded),
+                label: const Text("Print All Approved Certificates"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+            )
           ],
         ),
       ),
+    );
+  }
+
+  // ودجت صغيرة لعرض كل علامة في صندوق
+  Widget _buildGradeBox(String label, dynamic value, {bool isFinal = false}) {
+    return Column(
+      children: [
+        Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+        const SizedBox(height: 4),
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: isFinal ? AppColors.primary.withOpacity(0.1) : Colors.grey[100],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            value.toString(),
+            style: TextStyle(
+              fontWeight: isFinal ? FontWeight.bold : FontWeight.normal,
+              color: isFinal ? AppColors.primary : Colors.black,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
