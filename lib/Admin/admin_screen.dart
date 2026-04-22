@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import '../General/app_colors.dart';
-
-// ✅ Imports
 import 'admin_students_screen.dart';
 import 'admin_teachers_screen.dart';
-import 'admin_classes_screen.dart';
 import 'admin_sections_screen.dart';
-import 'admin_schedule_screen.dart';
 import 'admin_activities_approval_screen.dart';
 import 'admin_notifications_screen.dart';
-import 'admin_assignments_screen.dart';
 import 'admin_grades_screen.dart';
 import 'admin_attendance_screen.dart';
 import 'admin_reports_screen.dart';
+import 'admin_class_schedule_screen.dart';
 
 class AdminScreen extends StatelessWidget {
   final String name;
@@ -87,12 +83,9 @@ class AdminScreen extends StatelessWidget {
 
                   buildCard(context, Icons.people, "Students", const AdminStudentsScreen()),
                   buildCard(context, Icons.person, "Teachers", const AdminTeachersScreen()),
-                  buildCard(context, Icons.class_, "Classes", const AdminClassesScreen()),
-                  buildCard(context, Icons.group, "Sections", const AdminSectionsScreen()),
-                  buildCard(context, Icons.schedule, "Schedule", const AdminScheduleScreen()),
-                  buildCard(context, Icons.event, "Activities Approval", const AdminActivitiesApprovalScreen()),
+                  buildCard(context, Icons.hd, "Sections", const AdminSectionsScreen()),
+                  buildCard(context, Icons.table_chart, "Class Schedule", AdminClassScheduleScreen()),                  buildCard(context, Icons.event, "Activities Approval", const AdminActivitiesApprovalScreen()),
                   buildCard(context, Icons.notifications, "Notifications", const AdminNotificationsScreen()),
-                  buildCard(context, Icons.assignment, "Assignments", const AdminAssignmentsScreen()),
                   buildCard(context, Icons.grade, "Grades Review", const AdminGradesScreen()),
                   buildCard(context, Icons.fact_check, "Attendance", const AdminAttendanceScreen()),
                   buildCard(context, Icons.analytics, "Reports", const AdminReportsScreen()),
