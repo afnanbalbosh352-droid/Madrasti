@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:madrasati/Admin/admin_discipline_screen.dart';
 import '../General/app_colors.dart';
 import 'admin_students_screen.dart';
 import 'admin_teachers_screen.dart';
@@ -79,10 +80,10 @@ class AdminScreen extends StatelessWidget {
                   buildCard(context, Icons.hd, "Sections", AdminSectionsScreen()),
                   buildCard(context, Icons.table_chart, "Class Schedule", const AdminClassScheduleScreen()),
                   buildCard(context, Icons.event, "Activities Approval", const AdminActivitiesScreen()),
-                  // زر الإشعارات الكبير بقي لكي يرسل المدير الإعلانات (مثل جدول الفاينل)
                   buildCard(context, Icons.notifications, "Notifications", AdminNotificationsScreen()),
                   buildCard(context, Icons.grade, "Grades Review", AdminGradesScreen()),
                   buildCard(context, Icons.fact_check, "Attendance", AdminAttendanceScreen()),
+                  buildCard(context, Icons.gavel_rounded, "Warnings &\nPenalties", const AdminPenaltiesScreen()),
                 ],
               ),
             ),
