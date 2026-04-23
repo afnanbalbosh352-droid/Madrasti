@@ -9,7 +9,7 @@ import 'teacher_schedule_screen.dart';
 import 'teacher_assessment_screen.dart';
 import 'messages_screen.dart';
 import 'admin_notifications_screen.dart';
-
+import '../General/schedule_exam_screen.dart';
 class TeacherScreen extends StatelessWidget {
   final String name;
 
@@ -80,10 +80,9 @@ class TeacherScreen extends StatelessWidget {
                   buildCard(context, Icons.calendar_today_rounded, "Schedule", const TeacherScheduleScreen()),
                   buildCard(context, Icons.assessment_outlined, "Assessment", const TeacherAssessmentScreen()),
                   buildCard(context, Icons.message_rounded, "Messages", MessagesScreen(name: name)),
-                  
-                  // ✨ كرت إرسال الإشعارات للطلاب
                   buildCard(context, Icons.campaign_rounded, "Notification", const NotificationScreen()),
-                ],
+// هنا نمرر تخصص المدرس (مثلاً Mathematics) لكي تظهر له امتحاناته فقط
+buildCard(context, Icons.quiz_rounded, "Exam Schedule", const ScheduleExamScreen(teacherSubject: "Mathematics")),                ],
               ),
             ),
           ],

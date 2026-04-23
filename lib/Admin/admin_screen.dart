@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:madrasati/Admin/admin_add_exam_screen.dart';
 import '../General/app_colors.dart';
 import 'admin_students_screen.dart';
 import 'admin_teachers_screen.dart';
@@ -78,6 +79,7 @@ class AdminScreen extends StatelessWidget {
                   buildCard(context, Icons.grade_rounded, "Grades Review", AdminGradesScreen()),
                   buildCard(context, Icons.fact_check_rounded, "Attendance", AdminAttendanceScreen()),
                   buildCard(context, Icons.gavel_rounded, "Warnings &\nPenalties", const AdminPenaltiesScreen()),
+                  buildCard(context, Icons.edit_calendar_rounded, "Register Exam", const AdminAddExamScreen()),
                 ],
               ),
             ),
